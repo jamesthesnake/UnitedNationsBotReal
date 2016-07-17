@@ -107,7 +107,7 @@ var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzS
 	    }
 	})
 }
-    function sendCharterMessager(sender){
+    function sendCharterMessage(sender){
 	messageData={
 	    text:"
 WE THE PEOPLES OF THE UNITED NATIONS DETERMINED
