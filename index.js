@@ -1,7 +1,5 @@
 
-
-   
-    var express = require('express')
+var express = require('express')
     var bodyParser = require('body-parser')
     var request = require('request')
     var app = express()
@@ -29,39 +27,43 @@
 
     // to post data
     app.post('/webhook/', function (req, res) {
-	        messaging_events = req.body.entry[0].messaging
-		for (i = 0; i < messaging_events.length; i++) {
-		    event = req.body.entry[0].messaging[i]
-		    sender = event.sender.id
-		    if (event.message && event.message.text) {
-			    text = event.message.text
-			    if (text === 'Generic') {
-				sendGenericMessage(sender)
-				continue
-			    }
-			    else if(text == 'whats up' || "what's up"){
-				sendHiMessage(sender)
-				continue 
-			    }
-			    else if( text == "what is the united Nations website" || "website please" ){
-				sendWebsite(sender)
-				continue
+	            messaging_events = req.body.entry[0].messaging
+		    for (i = 0; i < messaging_events.length; i++) {
+			    event = req.body.entry[0].messaging[i]
+			        sender = event.sender.id
+			    if (event.message && event.message.text) {
+				    text = event.message.text
+				    if (text === 'Generic') {
+					sendGenericMessage(sender)
+					continue
+				    }
+				    else if(text == 'whats up' || " what's up"){
+					sendHiMessage(sender)
+					continue 
+				    }
+				    else if(text == 'here is my phone Number'){
+                                        sendHiMessage(sender)
+                                        continue
+                                    }
+				    else if(text== "let me donate to refugees"){
+					sendDictMessage(sender)
+					continue
 
+				    }
+				    else if(text == "account link"){
+					sendAccountLink(sender)
+					continue
+					}
+
+				    sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
 			    }
-                            else if( text == "what is the update on the crisis"){
-                                sendCrisis(sender)
-                                continue
-
-
-			    sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+			    if (event.postback) {
+				text = JSON.stringify(event.postback)
+				sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+				    continue
+			    }
 		    }
-		    if (event.postback) {
-			text = JSON.stringify(event.postback)
-			sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
-			    continue
-		    }
-		}
-		res.sendStatus(200)
+		    res.sendStatus(200)
 	})
 
 var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzSwKgyvSMY4AqZATpjdnsDE8xH5L1Xeoep5EMVZBflDegNtsE59f0xG5KMG2nC6pZCAUYW5G8GEj44p9InCvdm7bdNbl5fP1UQjG6jubJMBrAZDZD"
@@ -89,7 +91,7 @@ var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzS
 }
     function sendHiMessage(sender){
 	messageData={
-	    text:"fuck you"
+	    text:"Hello Citizen of the World!"
 	}
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -108,11 +110,40 @@ var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzS
 	    })
 
 	    }
-
-function sendWebsite(sender){
+function sendDictMessage(sender){
     messageData={
-	text:"http://www.un.org/en/index.html"
+	    "attachment": {
+		"type": "template",
+		"payload": {
+		    "template_type": "generic",
+		    "elements": [{
+			    "title": "First card",
+			    "subtitle": "Element #1 of an hscroll",
+			    "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+			    "buttons": [{
+				    "type": "web_url",
+				    "url": "http://tinyurl.com/refugeegive ",
+				    "title": "web url"
+				}, {
+				    "type": "postback",
+				    "title": "Postback",
+				    "payload": "Payload for first element in a generic bubble",
+				}],
+			}, {
+			    "title": "Second card",
+			    "subtitle": "Element #2 of an hscroll",
+			    "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
+			    "buttons": [{
+				    "type": "postback",
+				    "title": "Postback",
+				    "payload": "Payload for second element in a generic bubble",
+				}],
+			}]
+		}
+	    }
     }
+
+	
     request({
 	    url: 'https://graph.facebook.com/v2.6/me/messages',
 		qs: {access_token:token},
@@ -128,30 +159,41 @@ function sendWebsite(sender){
 		console.log('Error: ', response.body.error)
 		    }
 	})
-
 	}
-	function sendCrisis(sender){
-	    messageData={
-		text:"Please stay inside"
-	    }
-	    request({
-		    url: 'https://graph.facebook.com/v2.6/me/messages',
-		    qs: {access_token:token},
-		    method: 'POST',
-		    json: {
-			recipient: {id:sender},
-			message: messageData,
+	
+function sendAccountLink(sender){
+    messageData={
+"attachment": {
+      "type": "template",
+      "payload": {
+        "template_type": "generic",
+        "elements": [{
+          "title": "Welcome to M-Bank",
+          "image_url": "http://www.example.com/images/m-bank.png",
+    "buttons": [{
+	"type": "account_link",
+            "url": "https://www.example.com/oauth/authorize"
+	    }]
+    }]
+      }
+}
+    }
+    request({
+            url: 'https://graph.facebook.com/v2.6/me/messages',
+                qs: {access_token:token},
+                method: 'POST',
+                json: {
+                recipient: {id:sender},
+                    message: messageData,
                     }
-		}, function(error, response, body) {
-		    if (error) {
-			console.log('Error sending messages: ', error)
+        }, function(error, response, body) {
+            if (error) {
+                console.log('Error sending messages: ', error)
                     } else if (response.body.error) {
-			console.log('Error: ', response.body.error)
+                console.log('Error: ', response.body.error)
                     }
-		})
-
-        }
-
+        })
+}
 function sendGenericMessage(sender) {
     messageData = {
 	"attachment": {
@@ -161,7 +203,7 @@ function sendGenericMessage(sender) {
 		"elements": [{
 			"title": "First card",
 			"subtitle": "Element #1 of an hscroll",
-			"image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Flag_of_the_United_Nations.svg/2000px-Flag_of_the_United_Nations.svg.png",
+			"image_url": "http://messengerdemo.parseapp.com/img/rift.png",
 			"buttons": [{
 				"type": "web_url",
 				"url": "https://www.messenger.com",
@@ -205,3 +247,4 @@ function sendGenericMessage(sender) {
 app.listen(app.get('port'), function() {
 	console.log('running on port', app.get('port'))
 	    })
+
