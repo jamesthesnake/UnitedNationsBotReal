@@ -39,10 +39,20 @@
 				sendGenericMessage(sender)
 				continue
 			    }
-			    else if(text == 'whats up'){
+			    else if(text == 'whats up' || "what's up"){
 				sendHiMessage(sender)
 				continue 
 			    }
+			    else if( text == "what is the united Nations website" || "website please" ){
+				sendWebsite(sender)
+				continue
+
+			    }
+                            else if( text == "what is the update on the crisis"){
+                                sendCrisis(sender)
+                                continue
+
+
 			    sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
 		    }
 		    if (event.postback) {
@@ -98,6 +108,50 @@ var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzS
 	    })
 
 	    }
+
+function sendWebsite(sender){
+    messageData={
+	text:"http://www.un.org/en/index.html"
+    }
+    request({
+	    url: 'https://graph.facebook.com/v2.6/me/messages',
+		qs: {access_token:token},
+		method: 'POST',
+		json: {
+		recipient: {id:sender},
+		    message: messageData,
+		    }
+	}, function(error, response, body) {
+	    if (error) {
+		console.log('Error sending messages: ', error)
+		    } else if (response.body.error) {
+		console.log('Error: ', response.body.error)
+		    }
+	})
+
+	}
+	function sendCrisis(sender){
+	    messageData={
+		text:"Please stay inside"
+	    }
+	    request({
+		    url: 'https://graph.facebook.com/v2.6/me/messages',
+		    qs: {access_token:token},
+		    method: 'POST',
+		    json: {
+			recipient: {id:sender},
+			message: messageData,
+                    }
+		}, function(error, response, body) {
+		    if (error) {
+			console.log('Error sending messages: ', error)
+                    } else if (response.body.error) {
+			console.log('Error: ', response.body.error)
+                    }
+		})
+
+        }
+
 function sendGenericMessage(sender) {
     messageData = {
 	"attachment": {
@@ -107,7 +161,7 @@ function sendGenericMessage(sender) {
 		"elements": [{
 			"title": "First card",
 			"subtitle": "Element #1 of an hscroll",
-			"image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+			"image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Flag_of_the_United_Nations.svg/2000px-Flag_of_the_United_Nations.svg.png",
 			"buttons": [{
 				"type": "web_url",
 				"url": "https://www.messenger.com",
