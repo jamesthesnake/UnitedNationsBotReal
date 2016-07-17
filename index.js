@@ -1,13 +1,10 @@
-//var FBMessenger = require('fb-messenger')
-    //var messenger = new FBMessenger("EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzSwKgyvSMY4AqZATpjdnsDE8xH5L1Xeoep5EMVZBflDegNtsE59f0xG5KMG2nC6pZCAUYW5G8GEj44p9InCvdm7bdNbl5fP1UQjG6jubJMBrAZDZD")
 
-   
 var express = require('express')
     var bodyParser = require('body-parser')
     var request = require('request')
     var app = express()
     // messenger.getProfile(id, cb)     
-	
+    
     app.set('port', (process.env.PORT || 5000))
 
     // parse application/x-www-form-urlencoded
@@ -31,18 +28,18 @@ var express = require('express')
 
     // to post data
     app.post('/webhook/', function (req, res) {
-	            messaging_events = req.body.entry[0].messaging
-		    for (i = 0; i < messaging_events.length; i++) {
-			    event = req.body.entry[0].messaging[i]
-			        sender = event.sender.id
-			    if (event.message && event.message.text) {
-				
-				text = event.message.text.toLowerCase()
+	                messaging_events = req.body.entry[0].messaging
+			for (i = 0; i < messaging_events.length; i++) {
+			        event = req.body.entry[0].messaging[i]
+				        sender = event.sender.id
+				if (event.message && event.message.text) {
+				    
+				    text = event.message.text.toLowerCase()
 				    if (text === 'generic') {
 					sendGenericMessage(sender)
 					continue
 				    }
-				     if(text == 'whats up'){
+				    if(text == 'whats up'){
 					sendHiMessage(sender)
 					continue 
 				    }
@@ -57,28 +54,31 @@ var express = require('express')
 				    }
 				    else if( text.includes( "what impact will i have" )){
 					//var number=  text.replace( /^\D+/g, ''); // replace all leading non-digits with nothing
-					 var number = text.match(/\d/g);
-					 number = number.join("");
-				       
-					 sendRefugeeMessage(sender,number)
+					try{
+					var number = text.match(/\d/g);
+					number = number.join("");
+					}catch(err){
+					 number=0
+					}      
+					sendRefugeeMessage(sender,number)
 					continue
 				    }
-				
+				    
 				    else if(text == "account link"){
 					sendAccountLink(sender)
 					continue
-					}
+				    }
 
 				    sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
-			    }
-			    if (event.postback) {
-				text = JSON.stringify(event.postback)
-				sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
-				    continue
-			    }
-		    }
-		    res.sendStatus(200)
-3	})
+				}
+				if (event.postback) {
+				    text = JSON.stringify(event.postback)
+				    sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+				        continue
+				}
+			}
+			res.sendStatus(200)
+			3})
 
 var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzSwKgyvSMY4AqZATpjdnsDE8xH5L1Xeoep5EMVZBflDegNtsE59f0xG5KMG2nC6pZCAUYW5G8GEj44p9InCvdm7bdNbl5fP1UQjG6jubJMBrAZDZD"
 
@@ -145,11 +145,46 @@ function sendPhoneMessage(sender){
 	})
 
 
-}
+	}
 function sendRefugeeMessage(sender,number){
     messageData={
-        text:"You will donate "+ number +" dollars "
+        text:"You will donate "+ number +" dollars per month which can educate  " + number/30 + " childern in Iraq, or  give dental aid to  " +number/50+ " childern or " + number/30 +" emergency kits"
+	//        "attachment": {
+	//  "type": "template",
+	//  "payload": {
+	//      "template_type": "generic",
+	//      "elements": [{
+	//              "title": "Get in School",
+	//              "subtitle": "Straight to United Nations",
+	//              "image_url": "http://afronoveles.info/wp-content/uploads/2015/10/un.jpg",
+	//              "buttons": [{
+	//                      "type": "web_url",
+	//                      "url": "http://tinyurl.com/refugeegive ",
+	//                      "title": "web url"
+	//                  }, {
+	///                      "type": "postback",
+	//                     "title": "Postback",
+	//                      "payload": "Payload for first element in a generic bubble",
+	//                  }],
+	//          }, {
+	//              "title": "Get in dentsitry",
+	//              "subtitle": "Element #2 of an hscroll",
+	///              "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
+	//             "buttons": [{
+	//                      "type": "web_url",
+	//                      "url": "www.venmo.com ",
+	//                      "title": "venmo"
+	//                  }, {
+	//                      "type": "postback",
+	//                      "title": "Postback",
+	//                      "payload": "Payload for second element in a generic bubble",
+	//                  }],
+	//          }]
+	//  }
+        //}
+
     }
+    //    sendDictMessage(sender)
     request({
             url: 'https://graph.facebook.com/v2.6/me/messages',
                 qs: {access_token:token},
@@ -167,46 +202,46 @@ function sendRefugeeMessage(sender,number){
         })
 
 
-}
+	}
 function sendDictMessage(sender){
     messageData={
        
-	    "attachment": {
-		"type": "template",
-		"payload": {
-		    "template_type": "generic",
-		    "elements": [{
-			    "title": "Refugee Donations",
-			    "subtitle": "Straight to Un",
-			    "image_url": "http://afronoveles.info/wp-content/uploads/2015/10/un.jpg",
-			    "buttons": [{
-				    "type": "web_url",
-				    "url": "http://tinyurl.com/refugeegive ",
-				    "title": "web url"
-				}, {
-				    "type": "postback",
-				    "title": "Postback",
-				    "payload": "Payload for first element in a generic bubble",
-				}],
-			}, {
-			    "title": "via venmo",
-			    "subtitle": "Element #2 of an hscroll",
-			    "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
-			    "buttons": [{
-				    "type": "web_url",
-                                    "url": "www.venmo.com ",
-                                    "title": "venmo"
-                                }, {
-				    "type": "postback",
-				    "title": "Postback",
-				    "payload": "Payload for second element in a generic bubble",
-				}],
-			}]
-		}
+	"attachment": {
+	    "type": "template",
+	    "payload": {
+		"template_type": "generic",
+		"elements": [{
+			"title": "Refugee Donations",
+			"subtitle": "Straight to United Nations",
+			"image_url": "http://afronoveles.info/wp-content/uploads/2015/10/un.jpg",
+			"buttons": [{
+				"type": "web_url",
+				"url": "http://tinyurl.com/refugeegive ",
+				"title": "web url"
+			    }, {
+				"type": "postback",
+				"title": "Postback",
+				"payload": "Payload for first element in a generic bubble",
+			    }],
+		    }, {
+			"title": "via venmo",
+			"subtitle": "Element #2 of an hscroll",
+			"image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
+			"buttons": [{
+				"type": "web_url",
+				"url": "www.venmo.com ",
+				"title": "venmo"
+			    }, {
+				"type": "postback",
+				"title": "Postback",
+				"payload": "Payload for second element in a generic bubble",
+			    }],
+		    }]
 	    }
+	}
     }
 
-	
+    
     request({
 	    url: 'https://graph.facebook.com/v2.6/me/messages',
 		qs: {access_token:token},
@@ -223,23 +258,23 @@ function sendDictMessage(sender){
 		    }
 	})
 	}
-	
+
 function sendAccountLink(sender){
     messageData={
-"attachment": {
-      "type": "template",
-      "payload": {
-        "template_type": "generic",
-        "elements": [{
-          "title": "Welcome to M-Bank",
-          "image_url": "http://www.example.com/images/m-bank.png",
-    "buttons": [{
-	"type": "account_link",
-            "url": "https://www.example.com/oauth/authorize"
-	    }]
-    }]
-      }
-}
+	"attachment": {
+	    "type": "template",
+	    "payload": {
+		"template_type": "generic",
+		"elements": [{
+			"title": "Welcome to M-Bank",
+			"image_url": "http://www.example.com/images/m-bank.png",
+			"buttons": [{
+				"type": "account_link",
+				"url": "https://www.example.com/oauth/authorize"
+			    }]
+		    }]
+	    }
+	}
     }
     request({
             url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -256,7 +291,7 @@ function sendAccountLink(sender){
                 console.log('Error: ', response.body.error)
                     }
         })
-}
+	}
 function sendGenericMessage(sender) {
     messageData = {
 	"attachment": {
@@ -310,4 +345,3 @@ function sendGenericMessage(sender) {
 app.listen(app.get('port'), function() {
 	console.log('running on port', app.get('port'))
 	    })
-
