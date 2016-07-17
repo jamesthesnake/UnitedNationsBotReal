@@ -43,4 +43,4 @@ app.post('/webhook/', function (req, res) {
     res.sendStatus(200)
 })
 
-const token = "<PAGE_ACCESS_TOKEN>"
+const token = "EAAMeZARHIFrMBADDrhcDKDsrIqfy18o4eZBnNZAjkUUGEywrmCgFGJeSEZCb5vxwH7YUFc2EyzRJ0fczONWZBUZBP2huJ1J20kHw5LaZB6QMmbPkWO4LqUZBmoMONjqd35aZC0yyZA38JDP1MXJmPULy6WZA2MictfIjgW4LDVzju2rNgZDZD"
