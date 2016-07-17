@@ -32,8 +32,8 @@ var express = require('express')
 			    event = req.body.entry[0].messaging[i]
 			        sender = event.sender.id
 			    if (event.message && event.message.text) {
-				    text = event.message.text
-				    if (text === 'Generic') {
+				text = event.message.text.toLowerCase()
+				    if (text === 'generic') {
 					sendGenericMessage(sender)
 					continue
 				    }
@@ -139,9 +139,9 @@ function sendDictMessage(sender){
 		"payload": {
 		    "template_type": "generic",
 		    "elements": [{
-			    "title": "First card",
-			    "subtitle": "Element #1 of an hscroll",
-			    "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+			    "title": "Refugee Donations",
+			    "subtitle": "Straight to Un",
+			    "image_url": "http://afronoveles.info/wp-content/uploads/2015/10/un.jpg",
 			    "buttons": [{
 				    "type": "web_url",
 				    "url": "http://tinyurl.com/refugeegive ",
