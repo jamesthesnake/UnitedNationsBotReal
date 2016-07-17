@@ -37,12 +37,12 @@ var express = require('express')
 					sendGenericMessage(sender)
 					continue
 				    }
-				    else if(text == 'whats up' || " what's up"){
+				     if(text == 'whats up'){
 					sendHiMessage(sender)
 					continue 
 				    }
 				    else if(text == 'here is my phone Number'){
-                                        sendHiMessage(sender)
+                                        sendPhoneMessage(sender)
                                         continue
                                     }
 				    else if(text== "let me donate to refugees"){
@@ -110,6 +110,28 @@ var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzS
 	    })
 
 	    }
+function sendPhoneMessage(sender){
+    messageData={
+	text:"Will be inputed into UN databases!"
+    }
+    request({
+	    url: 'https://graph.facebook.com/v2.6/me/messages',
+		qs: {access_token:token},
+		method: 'POST',
+		json: {
+		recipient: {id:sender},
+		    message: messageData,
+		    }
+	}, function(error, response, body) {
+	    if (error) {
+		console.log('Error sending messages: ', error)
+		    } else if (response.body.error) {
+		console.log('Error: ', response.body.error)
+		    }
+	})
+
+
+}
 function sendDictMessage(sender){
     messageData={
 	    "attachment": {
