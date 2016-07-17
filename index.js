@@ -91,7 +91,7 @@ var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzS
 }
     function sendHiMessage(sender){
 	messageData={
-	    text:"Hello Citizen of the World!"
+	    text:"Hello Citizen of the World, ${profile.first_name}!"
 	}
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -132,6 +132,9 @@ function sendPhoneMessage(sender){
 
 
 }
+function sendRefugeeMessage(sender){
+
+}
 function sendDictMessage(sender){
     messageData={
 	    "attachment": {
@@ -152,10 +155,14 @@ function sendDictMessage(sender){
 				    "payload": "Payload for first element in a generic bubble",
 				}],
 			}, {
-			    "title": "Second card",
+			    "title": "via venmo",
 			    "subtitle": "Element #2 of an hscroll",
 			    "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
 			    "buttons": [{
+				    "type": "web_url",
+                                    "url": "www.venmo.com ",
+                                    "title": "venmo"
+                                }, {
 				    "type": "postback",
 				    "title": "Postback",
 				    "payload": "Payload for second element in a generic bubble",
