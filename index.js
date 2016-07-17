@@ -1,9 +1,13 @@
+//var FBMessenger = require('fb-messenger')
+    //var messenger = new FBMessenger("EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzSwKgyvSMY4AqZATpjdnsDE8xH5L1Xeoep5EMVZBflDegNtsE59f0xG5KMG2nC6pZCAUYW5G8GEj44p9InCvdm7bdNbl5fP1UQjG6jubJMBrAZDZD")
 
+   
 var express = require('express')
     var bodyParser = require('body-parser')
     var request = require('request')
     var app = express()
-
+    // messenger.getProfile(id, cb)     
+	
     app.set('port', (process.env.PORT || 5000))
 
     // parse application/x-www-form-urlencoded
@@ -32,6 +36,7 @@ var express = require('express')
 			    event = req.body.entry[0].messaging[i]
 			        sender = event.sender.id
 			    if (event.message && event.message.text) {
+				
 				text = event.message.text.toLowerCase()
 				    if (text === 'generic') {
 					sendGenericMessage(sender)
@@ -41,15 +46,24 @@ var express = require('express')
 					sendHiMessage(sender)
 					continue 
 				    }
-				    else if(text == 'here is my phone Number'){
+				    else if(text == 'here is my phone number'){
                                         sendPhoneMessage(sender)
                                         continue
                                     }
-				    else if(text== "let me donate to refugees"){
+				    else if( text == "let me donate to refugees" ){
 					sendDictMessage(sender)
 					continue
 
 				    }
+				    else if( text.includes( "what impact will i have" )){
+					//var number=  text.replace( /^\D+/g, ''); // replace all leading non-digits with nothing
+					 var number = text.match(/\d/g);
+					 number = number.join("");
+				       
+					 sendRefugeeMessage(sender,number)
+					continue
+				    }
+				
 				    else if(text == "account link"){
 					sendAccountLink(sender)
 					continue
@@ -64,7 +78,7 @@ var express = require('express')
 			    }
 		    }
 		    res.sendStatus(200)
-	})
+3	})
 
 var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzSwKgyvSMY4AqZATpjdnsDE8xH5L1Xeoep5EMVZBflDegNtsE59f0xG5KMG2nC6pZCAUYW5G8GEj44p9InCvdm7bdNbl5fP1UQjG6jubJMBrAZDZD"
 
@@ -132,11 +146,31 @@ function sendPhoneMessage(sender){
 
 
 }
-function sendRefugeeMessage(sender){
+function sendRefugeeMessage(sender,number){
+    messageData={
+        text:"You will donate "+ number +" dollars "
+    }
+    request({
+            url: 'https://graph.facebook.com/v2.6/me/messages',
+                qs: {access_token:token},
+                method: 'POST',
+                json: {
+                recipient: {id:sender},
+                    message: messageData,
+                    }
+        }, function(error, response, body) {
+            if (error) {
+                console.log('Error sending messages: ', error)
+                    } else if (response.body.error) {
+                console.log('Error: ', response.body.error)
+                    }
+        })
+
 
 }
 function sendDictMessage(sender){
     messageData={
+       
 	    "attachment": {
 		"type": "template",
 		"payload": {
