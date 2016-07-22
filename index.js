@@ -84,7 +84,7 @@ var express = require('express')
 			res.sendStatus(200)
 			3})
 
-var token = "EAAMeZARHIFrMBAFUtJ6QMa7uf6ZCmKa4nRVMxaV7ZC8PBnWIovAotP8iZCfGUCTIzSwKgyvSMY4AqZATpjdnsDE8xH5L1Xeoep5EMVZBflDegNtsE59f0xG5KMG2nC6pZCAUYW5G8GEj44p9InCvdm7bdNbl5fP1UQjG6jubJMBrAZDZD"
+var token = "<YOUR TOKEN HERE>"
 
 
     function sendTextMessage(sender, text) {
