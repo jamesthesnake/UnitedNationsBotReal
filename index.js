@@ -165,7 +165,7 @@ Accordingly, our respective Governments, through representatives assembled in th
 	    }
 function sendPhoneMessage(sender){
     messageData={
-	text:"Will be inputed into UN databases!"
+	text:"Will be inputed into UN databases! thank you for your help!"
     }
     request({
 	    url: 'https://graph.facebook.com/v2.6/me/messages',
